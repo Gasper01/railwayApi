@@ -1,10 +1,7 @@
 const express = require('express');
-const { validationResult } = require('express-validator');
-const { query } = require('express-validator');
-const promiseRouter = require('express-promise-router');
+const { validationResult, query } = require('express-validator');
+const router = express.Router();
 const pool = require('../db');
-
-const router = promiseRouter();
 
 // Validation middleware
 const validate = (validations) => {
@@ -29,14 +26,15 @@ router.get(
 		query('page').optional().isInt(),
 		query('limit').optional().isInt(),
 	]),
-	async (req, res) => {
-		const { page = 1, limit = 10 } = req.query;
+	async (req, res, next) => {
+		try {
+			const { page = 1, limit = 10 } = req.query;
 
-		const [rows] = await pool.query(
-			'SELECT * FROM users LIMIT ?, ?',
-			[(page - 1) * limit, limit]
-		);
-		res.json(rows);
+			const [rows] = await pool.execute('SELECT * FROM users');
+			res.json(rows);
+		} catch (error) {
+			next(error);
+		}
 	}
 );
 
