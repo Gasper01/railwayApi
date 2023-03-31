@@ -1,26 +1,26 @@
 const express = require('express');
 const compression = require('compression');
 const cors = require('cors');
-const bodyParser = require('body-parser');
-const itemsRouter = require('./routes/items');
 const helmet = require('helmet');
+
+const usersadminRouter = require('./routes/usersadmin');
 
 const app = express();
 
 // Middlewares
-app.use(helmet());
-app.use(compression());
-app.use(cors());
-app.use(bodyParser.json());
+app.use(helmet(), compression(), cors(), express.json());
 
 // Routes
-app.use('/items', itemsRouter);
+app.use('/', usersadminRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
 	console.error(err.stack);
 	res.status(500).send('Something broke!');
 });
+
+// Default 404 middleware
+app.use('*', (req, res) => res.status(404).send('Not found'));
 
 // Start server
 const port = process.env.PORT || 3000;
