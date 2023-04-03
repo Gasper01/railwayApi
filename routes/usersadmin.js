@@ -30,12 +30,36 @@ router.get('/users', validate([]), async (req, res, next) => {
 });
 router.post('/users', validate([]), async (req, res, next) => {
 	try {
-		const { name, email } = req.body;
+		const data = req.body;
 		await pool.execute(
 			'INSERT INTO users (nombre, correo) VALUES (?, ?)',
-			[name, email]
+			[data.name, data.email]
 		);
 		res.json({ message: 'User created successfully' });
+	} catch (error) {
+		next(error);
+	}
+});
+
+router.put('/users/:id', validate([]), async (req, res, next) => {
+	try {
+		const { id } = req.params;
+		const { data } = req.body;
+		await pool.execute(
+			'UPDATE users SET nombre = ?, correo = ? WHERE id = ?',
+			[data.name, data.email, id]
+		);
+		res.json({ message: 'User updated successfully' });
+	} catch (error) {
+		next(error);
+	}
+});
+
+router.delete('/users/:id', validate([]), async (req, res, next) => {
+	try {
+		const { id } = req.params;
+		await pool.execute('DELETE FROM users WHERE id = ?', [id]);
+		res.json({ message: 'User deleted successfully' });
 	} catch (error) {
 		next(error);
 	}
