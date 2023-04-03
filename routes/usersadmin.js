@@ -20,22 +20,25 @@ const validate = (validations) => {
 };
 
 // Routes
-router.get(
-	'/users',
-	validate([
-		query('page').optional().isInt(),
-		query('limit').optional().isInt(),
-	]),
-	async (req, res, next) => {
-		try {
-			const { page = 1, limit = 10 } = req.query;
-
-			const [rows] = await pool.execute('SELECT * FROM users');
-			res.json(rows);
-		} catch (error) {
-			next(error);
-		}
+router.get('/users', validate([]), async (req, res, next) => {
+	try {
+		const [rows] = await pool.execute('SELECT * FROM users');
+		res.json(rows);
+	} catch (error) {
+		next(error);
 	}
-);
+});
+router.post('/users', validate([]), async (req, res, next) => {
+	try {
+		const data = req.body;
+		await pool.execute(
+			'INSERT INTO users (name, email) VALUES (?, ?)',
+			[data.name, data.email]
+		);
+		res.json({ message: 'User created successfully' });
+	} catch (error) {
+		next(error);
+	}
+});
 
 module.exports = router;
