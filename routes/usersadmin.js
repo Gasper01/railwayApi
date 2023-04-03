@@ -32,7 +32,7 @@ router.post('/users', validate([]), async (req, res, next) => {
 	try {
 		const { name, email } = req.body;
 		await pool.execute(
-			'INSERT INTO users (name, email) VALUES (nombre, correo)',
+			'INSERT INTO users (nombre, correo) VALUES (?, ?)',
 			[name, email]
 		);
 		res.json({ message: 'User created successfully' });
