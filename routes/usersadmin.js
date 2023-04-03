@@ -30,10 +30,10 @@ router.get('/users', validate([]), async (req, res, next) => {
 });
 router.post('/users', validate([]), async (req, res, next) => {
 	try {
-		const data = req.body;
+		const { name, email } = req.body;
 		await pool.execute(
-			'INSERT INTO users (name, email) VALUES (?, ?)',
-			[data.name, data.email]
+			'INSERT INTO users (name, email) VALUES (nombre, correo)',
+			[name, email]
 		);
 		res.json({ message: 'User created successfully' });
 	} catch (error) {
