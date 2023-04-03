@@ -28,6 +28,22 @@ router.get('/users', validate([]), async (req, res, next) => {
 		next(error);
 	}
 });
+router.get('/users/:id', validate([]), async (req, res, next) => {
+	try {
+		const { id } = req.params;
+		const [rows] = await pool.execute(
+			'SELECT * FROM users WHERE id = ?',
+			[id]
+		);
+		if (rows.length === 0) {
+			return res.status(404).json({ message: 'User not found' });
+		}
+		res.json(rows[0]);
+	} catch (error) {
+		next(error);
+	}
+});
+
 router.post('/users', validate([]), async (req, res, next) => {
 	try {
 		const data = req.body;
