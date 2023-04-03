@@ -44,7 +44,7 @@ router.post('/users', validate([]), async (req, res, next) => {
 router.put('/users/:id', validate([]), async (req, res, next) => {
 	try {
 		const { id } = req.params;
-		const { data } = req.body;
+		const data = req.body;
 		await pool.execute(
 			'UPDATE users SET nombre = ?, correo = ? WHERE id = ?',
 			[data.name, data.email, id]
