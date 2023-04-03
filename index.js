@@ -1,7 +1,7 @@
 const express = require('express');
 const compression = require('compression');
 const helmet = require('helmet');
-
+const cors = require('cors');
 const usersadminRouter = require('./routes/usersadmin');
 
 const app = express();
