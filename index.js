@@ -10,6 +10,11 @@ const app = express();
 app.use(helmet());
 app.use(compression());
 app.use(express.json());
+app.use(
+	cors({
+		origin: 'http://localhost:3000', // Especifica el origen permitido para las solicitudes
+	})
+);
 
 // Routes
 app.use('/', usersadminRouter);
