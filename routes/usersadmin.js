@@ -1,26 +1,9 @@
 const express = require('express');
-const { validationResult, query } = require('express-validator');
 const router = express.Router();
 const pool = require('../db');
+const validate = require('../validation');
 
-// Validation middleware
-const validate = (validations) => {
-	return async (req, res, next) => {
-		await Promise.all(
-			validations.map((validation) => validation.run(req))
-		);
-
-		const errors = validationResult(req);
-		if (errors.isEmpty()) {
-			return next();
-		}
-
-		res.status(400).json({ errors: errors.array() });
-	};
-};
-
-// Routes
-router.get('/users', validate([]), async (req, res, next) => {
+router.get('/users', async (req, res, next) => {
 	try {
 		const [rows] = await pool.execute('SELECT * FROM users');
 		res.json(rows);
@@ -28,7 +11,8 @@ router.get('/users', validate([]), async (req, res, next) => {
 		next(error);
 	}
 });
-router.get('/users/:id', validate([]), async (req, res, next) => {
+
+router.get('/users/:id', async (req, res, next) => {
 	try {
 		const { id } = req.params;
 		const [rows] = await pool.execute(
@@ -44,9 +28,13 @@ router.get('/users/:id', validate([]), async (req, res, next) => {
 	}
 });
 
-router.post('/users', validate([]), async (req, res, next) => {
+router.post('/users', async (req, res, next) => {
 	try {
 		const data = req.body;
+		const errors = validate(data); // Validating user input
+		if (errors.length) {
+			return res.status(400).json({ errors }); // If there are errors, return them
+		}
 		await pool.execute(
 			'INSERT INTO users (nombre, correo) VALUES (?, ?)',
 			[data.name, data.email]
@@ -57,10 +45,14 @@ router.post('/users', validate([]), async (req, res, next) => {
 	}
 });
 
-router.put('/users/:id', validate([]), async (req, res, next) => {
+router.put('/users/:id', async (req, res, next) => {
 	try {
 		const { id } = req.params;
 		const data = req.body;
+		const errors = validate(data); // Validating user input
+		if (errors.length) {
+			return res.status(400).json({ errors }); // If there are errors, return them
+		}
 		await pool.execute(
 			'UPDATE users SET nombre = ?, correo = ? WHERE id = ?',
 			[data.name, data.email, id]
@@ -71,7 +63,7 @@ router.put('/users/:id', validate([]), async (req, res, next) => {
 	}
 });
 
-router.delete('/users/:id', validate([]), async (req, res, next) => {
+router.delete('/users/:id', async (req, res, next) => {
 	try {
 		const { id } = req.params;
 		await pool.execute('DELETE FROM users WHERE id = ?', [id]);
