@@ -11,9 +11,9 @@ app.use(helmet());
 app.use(compression());
 app.use(express.json());
 app.use(
-	cors({
-		origin: 'http://localhost:3000','https://gas-app-mauve.vercel.app', // Especifica el origen permitido para las solicitudes
-	})
+    cors({
+        origin: ['http://localhost:3000', 'https://gas-app-mauve.vercel.app'], // Especifica los orígenes permitidos para las solicitudes
+    })
 );
 
 // Routes
