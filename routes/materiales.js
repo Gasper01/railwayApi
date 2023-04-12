@@ -27,7 +27,7 @@ router.get('/materiales/:id', async (req, res, next) => {
 router.post('/materiales', async (req, res, next) => {
   try {
     const { codigo, descripcion, cantidad, UND } = req.body;
-    await pool.execute('INSERT INTO materiales (codigo, descripcion,cantidad,UND VALUES (?, ?, ?, ?)', [codigo, descripcion, cantidad, UND]);
+    await pool.execute('INSERT INTO materiales (codigo, descripcion,cantidad,UND) VALUES (?, ?, ?, ?)', [codigo, descripcion, cantidad, UND]);
     res.json({ message: 'materiales created successfully' });
   } catch (error) {
     next(error);
