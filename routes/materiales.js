@@ -26,8 +26,8 @@ router.get('/materiales/:id', async (req, res, next) => {
 
 router.post('/materiales', async (req, res, next) => {
   try {
-    const { codigo, descripcion, cantiadad, UND } = req.body;
-    await pool.execute('INSERT INTO materiales (codigo, descripcion,cantiadad,UND VALUES (?, ?, ?, ?)', [codigo, descripcion, cantiadad, UND]);
+    const { codigo, descripcion, cantidad, UND } = req.body;
+    await pool.execute('INSERT INTO materiales (codigo, descripcion,cantidad,UND VALUES (?, ?, ?, ?)', [codigo, descripcion, cantidad, UND]);
     res.json({ message: 'materiales created successfully' });
   } catch (error) {
     next(error);
@@ -38,7 +38,7 @@ router.put('/materiales/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
     const { codigo, descripcion, cantiadad, UND } = req.body;
-    await pool.execute('UPDATE materiales SET descripcion = ?, cantiadad = ?, UND = ? WHERE id = ?', [codigo, descripcion, cantiadad, UND, id]);
+    await pool.execute('UPDATE materiales SET descripcion = ?, cantidad = ?, UND = ? WHERE id = ?', [codigo, descripcion, cantiadad, UND, id]);
     res.json({ message: 'materiales updated successfully' });
   } catch (error) {
     next(error);
