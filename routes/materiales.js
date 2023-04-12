@@ -37,10 +37,16 @@ router.post('/materiales', async (req, res, next) => {
 router.put('/materiales/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { codigo, descripcion, cantiadad, UND } = req.body;
-    await pool.execute('UPDATE materiales SET descripcion = ?, cantidad = ?, UND = ? WHERE id = ?', [codigo, descripcion, cantiadad, UND, id]);
-    res.json({ message: 'materiales updated successfully' });
+    const { codigo, descripcion, cantidad, UND } = req.body;
+    const query = 'UPDATE materiales SET descripcion = ?, cantidad = ?, UND = ? WHERE id = ?';
+    const params = [descripcion, cantidad, UND, codigo, id];
+    const [result] = await pool.execute(query, params);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'No se encontró el material especificado' });
+    }
+    res.json({ message: 'Material actualizado correctamente' });
   } catch (error) {
+    console.error(error);
     next(error);
   }
 });
